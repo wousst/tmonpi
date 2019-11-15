@@ -2,6 +2,12 @@ tMonPi
 ======
 A simple IoT system that monitor the temperature on Raspi.
 
+Howto: Install
+--------------
+```
+npm install --save jsonwebtoken mqtt redis
+```
+
 Dependencies
 ------------
 * Google IoT-Core
