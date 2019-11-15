@@ -2,11 +2,12 @@ const fs = require('fs');
 var mqtt = require('mqtt');
 var shell = require('shelljs');
 var mqtt = require('mqtt');
+var jwt = require('jsonwebtoken');
 
 // Simple Temperature Monitoring on Raspi
-var tmp = shell.cat('/sys/class/thermal/thermal_zone0/temp');
-var val = parseInt(tmp.stdout/1000);
-console.log("raspi-temp: " + val);
+//var tmp = shell.cat('/sys/class/thermal/thermal_zone0/temp');
+//var val = parseInt(tmp.stdout/1000);
+//console.log("raspi-temp: " + val);
 
 const projectId = 'watchmen-mqtt';
 const deviceId = 'raspiModB';
@@ -18,12 +19,13 @@ const mqttBridgeHostname = 'mqtt.googleapis.com';
 
 const mqttBridgePort = 443;
 const messageType = 'events';
+const numMessages = 5;
 
 let publishChainInProgress = false;
 
 const mqttClientId = `projects/${projectId}/locations/${region}/registries/${registryId}/devices/${deviceId}`;
 
-const createJwt = (projectId, privateKeyFile, algorithm) => {
+const createJwt = (projectId, privateKeyFile, algorithm, function() {
 	const token = {
 		iat: parseInt(Date.now() / 1000),
 		exp: parseInt(Date.now() / 1000) + 20 * 60,
@@ -32,7 +34,7 @@ const createJwt = (projectId, privateKeyFile, algorithm) => {
 
 	const privateKey = fs.readFileSync(privateKeyFile);
 	return jwt.sign(token, privateKey, {algorithm: algorithm});
-};
+});
 
 const publishAsync = function(mqttTopic, client, iatTime, messageSent, connectionArgs) {
 	var payload = `payload/${messageSent}`;
@@ -76,8 +78,9 @@ client.on('connect', function(success) {
 	if(!success) {
 		console.log("client not connected.");
 	} else if(publishChainInProgress) {
+		var val = Math.random() * 99;
 		// Publish to Google IoT-Core
-		publishAsync(mqttTopic, client, iatTime, reply, numMessages, connectionArgs);
+		publishAsync(mqttTopic, client, iatTime, val, numMessages, connectionArgs);
 	}
 });
 
