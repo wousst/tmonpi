@@ -5,7 +5,7 @@ A simple IoT system that monitor the temperature on Raspi.
 Howto: Install
 --------------
 ```
-npm install --save jsonwebtoken mqtt redis
+npm install --save jsonwebtoken mqtt redis shelljs date-time firebase-functions firebase-admin
 ```
 
 Dependencies

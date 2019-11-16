@@ -1,7 +1,6 @@
 const fs = require('fs');
 var mqtt = require('mqtt');
 var shell = require('shelljs');
-var mqtt = require('mqtt');
 var jwt = require('jsonwebtoken');
 
 // Simple Temperature Monitoring on Raspi
