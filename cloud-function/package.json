@@ -1,0 +1,9 @@
+{
+    "name": "cftrigger",
+    "version": "0.0.1",
+    "dependencies": {
+        "@google-cloud/pubsub": "*",
+        "firebase-functions": "*",
+        "firebase-admin": "*"
+    }
+}
