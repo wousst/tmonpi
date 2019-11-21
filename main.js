@@ -2,6 +2,10 @@ const fs = require('fs');
 var mqtt = require('mqtt');
 var shell = require('shelljs');
 var jwt = require('jsonwebtoken');
+var timestamp = require('date-time');
+
+var handler;
+var counter = 0; // debug purpose: payload counter
 
 // Simple Temperature Monitoring on Raspi
 //var tmp = shell.cat('/sys/class/thermal/thermal_zone0/temp');
@@ -9,11 +13,11 @@ var jwt = require('jsonwebtoken');
 //console.log("raspi-temp: " + val);
 
 const projectId = 'watchmen-mqtt';
-const deviceId = 'raspiModB';
+const deviceId = 't430'; // Raspberry Pi = raspiModB
 const registryId = 'tmonpi-registry';
 const region = 'asia-east1';
 const algorithm = 'RS256';
-const privateKeyFile = './ca_private.pem';
+const privateKeyFile = './device-credentials/ca_private.pem';
 const mqttBridgeHostname = 'mqtt.googleapis.com';
 
 const mqttBridgePort = 443;
@@ -36,12 +40,13 @@ const createJwt = (projectId, privateKeyFile, algorithm, function() {
 });
 
 const publishAsync = function(mqttTopic, client, iatTime, messageSent, connectionArgs) {
-	var payload = `payload/${messageSent}`;
+	var payload = `/raspi/temperature/celcius/${messageSent}`;
 	console.log("debug: " + payload);
 
 	client.publish(mqttTopic, payload, {qos: 0}, function(err) {
 		if(!err) {
-			console.log("payload published.");
+			counter += 1;
+			console.log(`(${counter}) payload published.`);
 
 		} else {
 			console.log("payload-publish err: " + err);
@@ -77,18 +82,24 @@ client.on('connect', function(success) {
 	if(!success) {
 		console.log("client not connected.");
 	} else if(publishChainInProgress) {
+		handler = setInterval(function() {
 		var val = Math.random() * 99;
 		// Publish to Google IoT-Core
 		publishAsync(mqttTopic, client, iatTime, val, numMessages, connectionArgs);
+		}, 1000 * 3);
 	}
 });
 
-
+// Close gcp connection
 client.on('close', function() {
 	console.log('close');
 });
 
+// Error handling
 client.on('error', function(err) {
 	console.log("err: " + err);
+
+	client.end(); // close gcp connection
+	clearInterval(handler); // clear setInterval handler
 });
 
