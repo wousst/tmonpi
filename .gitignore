@@ -1,0 +1,10 @@
+# Dependencies directories
+node_modules
+
+# Remove Google/device credentials
+device-credentials
+cloud-function/watchmen-mqtt-01eddebe3bbf.json
+
+# Remove package-lock.json
+package-lock.json
+
