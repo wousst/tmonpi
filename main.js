@@ -31,7 +31,7 @@ const mqttClientId = `projects/${projectId}/locations/${region}/registries/${reg
 const createJwt = (projectId, privateKeyFile, algorithm, function() {
 	const token = {
 		iat: parseInt(Date.now() / 1000),
-		exp: parseInt(Date.now() / 1000) + 20 * 60,
+		exp: parseInt(Date.now() / 1000) + 60 * 60 * 24 * 2, // 2 days uptime
 		aud: projectId,
 	};
 
