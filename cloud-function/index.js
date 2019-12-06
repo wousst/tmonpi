@@ -10,6 +10,8 @@
 var functions = require('firebase-functions');
 var admin = require('firebase-admin');
 
+const db = admin.database();
+
 // Load service account key
 var serviceAccount = require('./watchmen-mqtt-01eddebe3bbf.json');
 
@@ -37,10 +39,29 @@ exports.subscribe = pubsubMessage => {
 };
 // [END functions_pubsub_subscribe]
 
-// Procedure :- DEPRECATED 
-// exports.cftriggerPubSub = (data, context) => {
-//     const pubSubMessage = data;
-//     const name = pubSubMessage.data ? Buffer.from(pubSubMessage.data, 'base64').toString() : 'World!';
+exports.subscribe = functions.pubsub.topic('tmonpi-topic').onPublish(message, context) => {
+    const attributes = message.attributes;
+    const payload = message.json;
 
-//     console.log(`hello, ${name}; timestamp: ${context.timestamp}`);
-// };
+    const deviceId = attributes[deviceId];
+
+    const data = {
+        temp: payload.temp,
+        timestamp: payload.timestamp
+    };
+
+    return Promise.all([
+        updateCurrentDataFirebase(data)
+    ]);
+
+};
+
+
+// [START updateCurrentDataFirebase]
+function updateCurrentDataFirebase(data) {
+    return db.ref(`/devices/${data.deviceId}`).set({
+        temp: data.temp,
+        lastTimestamp: data.timestamp
+    });
+}
+// [END updateCurrentDataFirebase]
