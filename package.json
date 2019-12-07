@@ -1,0 +1,10 @@
+{
+    "name": "tmonpi",
+    "version": "0.0.1",
+    "dependencies": {
+        "mqtt": "*",
+        "shelljs": "*",
+        "jsonwebtoken": "*",
+        "date-time": "*"
+    }
+}
