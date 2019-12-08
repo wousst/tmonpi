@@ -31,7 +31,7 @@ const mqttClientId = `projects/${projectId}/locations/${region}/registries/${reg
 const createJwt = (projectId, privateKeyFile, algorithm, function() {
 	const token = {
 		iat: parseInt(Date.now() / 1000),
-		exp: parseInt(Date.now() / 1000) + 60 * 60 * 24 * 2, // 2 days uptime
+		exp: parseInt(Date.now() / 1000) + 60 * 60 * 2, // 2 days uptime
 		aud: projectId,
 	};
 
@@ -86,7 +86,7 @@ client.on('connect', function(success) {
 		var val = Math.random() * 99;
 		// Publish to Google IoT-Core
 		publishAsync(mqttTopic, client, iatTime, val, numMessages, connectionArgs);
-		}, 1000 * 3);
+		}, 1000 * 3); // flush for every 3 secs
 	}
 });
 
