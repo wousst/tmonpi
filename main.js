@@ -28,10 +28,11 @@ let publishChainInProgress = false;
 
 const mqttClientId = `projects/${projectId}/locations/${region}/registries/${registryId}/devices/${deviceId}`;
 
+// Specification of JSONWebToken 
 const createJwt = (projectId, privateKeyFile, algorithm, function() {
 	const token = {
-		iat: parseInt(Date.now() / 1000),
-		exp: parseInt(Date.now() / 1000) + 60 * 60 * 2, // 2 days uptime
+		iat: parseInt(Date.now() / 1000), // issued time
+		exp: parseInt(Date.now() / 1000) + 60 * 60 * 2, // expiration time	, 2 days uptime
 		aud: projectId,
 	};
 
